@@ -34,16 +34,16 @@ PREFIX = /usr/local
 TARGET = unix
 CAN_DRIVER = can_virtual
 TIMERS_DRIVER = timers_unix
-TESTMASTER = "OwnMaster"
+TESTSLAVE = "OwnSlave"
 
 INCLUDES = -I../../include -I../../include/$(TARGET) -I../../include/$(CAN_DRIVER) -I../../include/$(TIMERS_DRIVER)
 
-MASTER_OBJS = TestMaster.o OwnMaster.o Master.o
+SLAVE_OBJS = TestSlave.o OwnSlave.o Slave.o
 
-OBJS = $(MASTER_OBJS) ../../src/libcanfestival.a ../../drivers/$(TARGET)/libcanfestival_$(TARGET).a
+OBJS = $(SLAVE_OBJS) ../../src/libcanfestival.a ../../drivers/$(TARGET)/libcanfestival_$(TARGET).a
 
 ifeq ($(TARGET),win32)
-	TESTMASTER = "OwnMaster.exe"
+	TESTMASTER = "OwnSlave.exe"
 endif
 
 ifeq ($(TIMERS_DRIVER),timers_win32)
@@ -58,36 +58,36 @@ ifeq ($(TIMERS_DRIVER),timers_rtai)
 	PROGDEFINES = -DUSE_RTAI
 endif
 
-all: $(TESTMASTER)
+all: $(TESTSLAVE)
 
 ../../drivers/$(TARGET)/libcanfestival_$(TARGET).a:
 	$(MAKE) -C ../../drivers/$(TARGET) libcanfestival_$(TARGET).a
 
 
-$(TESTMASTER): $(OBJS)
+$(TESTSLAVE): $(OBJS)
 	$(LD) $(CFLAGS) $(PROG_CFLAGS) ${PROGDEFINES} $(INCLUDES) -o $@ $(OBJS) $(EXE_CFLAGS)
 	
-TestMaster.c: TestMaster.od
+TestSlave.c: TestSlave.od
 	$(MAKE) -C ../../objdictgen gnosis
-	python ../../objdictgen/objdictgen.py TestMaster.od TestMaster.c
+	python ../../objdictgen/objdictgen.py TestSlave.od TestSlave.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(PROG_CFLAGS) ${PROGDEFINES} $(INCLUDES) -o $@ -c $<
 
 clean:
-	rm -f $(MASTER_OBJS)
-	rm -f $(TESTMASTER)
+	rm -f $(SLAVE_OBJS)
+	rm -f $(TESTSLAVE)
 		
 mrproper: clean
 	rm -f TestSlave.c
 	rm -f TestMaster.c
 	
-install: OwnMaster
+install: OwnSlave
 	mkdir -p $(DESTDIR)$(PREFIX)/bin/
 	cp $< $(DESTDIR)$(PREFIX)/bin/
 	
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/OwnMaster
+	rm -f $(DESTDIR)$(PREFIX)/bin/OwnSlave
 
 
 
