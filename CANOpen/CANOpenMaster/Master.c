@@ -65,6 +65,33 @@ void TestMaster_initialisation(CO_Data* d)
 					
 }
 
+UNS8 ReadSDO(UNS8 nodeId, UNS16 index, UNS8 subIndex, UNS8 dataType, void* data, UNS8* size)
+{
+	UNS32 abortCode = 0;
+	UNS8 res = SDO_UPLOAD_IN_PROGRESS;
+	UNS32 sz = 0;
+	UNS8 dat = 0;
+
+	UNS8 err = readNetworkDict(&TestMaster_Data, nodeId, index, subIndex, dataType, 0);
+	if (err)
+	{
+		printf("------>Can't readNetworkDict\n");
+		return 0xFF;
+	}
+	for(;;)
+	{
+		res = getReadResultNetworkDict(&TestMaster_Data, nodeId, &dat, &sz, &abortCode);
+		if (res != SDO_UPLOAD_IN_PROGRESS)
+			break; 
+		sleep(1);
+		continue;
+	}
+	closeSDOtransfer(&TestMaster_Data, nodeId, SDO_CLIENT);
+	if (res == SDO_FINISHED)
+		return 0;
+	return 0xFF;
+}
+
 // Step counts number of times ConfigureSlaveNode is called
 static int init_step = 0;
 
@@ -156,7 +183,20 @@ void TestMaster_preOperational(CO_Data* d)
 
 void TestMaster_operational(CO_Data* d)
 {
-	eprintf("TestMaster_operational\n");
+	while(1)
+	{
+		eprintf("TestMaster_operational\n");
+	
+		UNS8 res;
+		UNS8 num = 0;
+		UNS8 size;
+		size = sizeof (num);
+		res = ReadSDO(1, 0x2015, 0, uint8, &num, &size);
+		if (res == 0)
+			printf("Number of entries: %x\n", num);
+
+		sleep(1);
+	}
 }
 
 void TestMaster_stopped(CO_Data* d)
