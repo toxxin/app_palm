@@ -21,18 +21,18 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # 
 
-CC = gcc
-CXX = g++
-LD = g++
+CC = arm-openwrt-linux-gcc
+CXX = arm-openwrt-linux-g++
+LD = arm-openwrt-linux-g++
 OPT_CFLAGS = -O2
 CFLAGS = $(OPT_CFLAGS)
 PROG_CFLAGS =  -fPIC -DDEBUG_MSG_CONSOLE_ON -g
 EXE_CFLAGS =  -lpthread -lrt -ldl
 OS_NAME = Linux
-ARCH_NAME = x86_64
-PREFIX = /usr/local
+ARCH_NAME = arm
+PREFIX = arm-openwrt-linux-
 TARGET = unix
-CAN_DRIVER = can_virtual
+CAN_DRIVER = can_socket
 TIMERS_DRIVER = timers_unix
 TESTSLAVE = "OwnSlave"
 
@@ -43,7 +43,7 @@ SLAVE_OBJS = TestSlave.o OwnSlave.o Slave.o
 OBJS = $(SLAVE_OBJS) ../../src/libcanfestival.a ../../drivers/$(TARGET)/libcanfestival_$(TARGET).a
 
 ifeq ($(TARGET),win32)
-	TESTMASTER = "OwnSlave.exe"
+	TESTSLAVE = "OwnSlave.exe"
 endif
 
 ifeq ($(TIMERS_DRIVER),timers_win32)
@@ -88,6 +88,3 @@ install: OwnSlave
 	
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/OwnSlave
-
-
-
