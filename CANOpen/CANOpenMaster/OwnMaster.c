@@ -23,6 +23,8 @@ void Exit(CO_Data *d, UNS32 id)
 
 int main(int argc, char **argv)
 {
+	TimerInit();
+
 	char *LibraryPath = "../../drivers/can_virtual/libcanfestival_can_virtual.so";
 
 	if (LoadCanDriver(LibraryPath) == NULL)
