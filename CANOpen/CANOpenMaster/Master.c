@@ -183,20 +183,7 @@ void TestMaster_preOperational(CO_Data* d)
 
 void TestMaster_operational(CO_Data* d)
 {
-	while(1)
-	{
-		eprintf("TestMaster_operational\n");
-	
-		UNS8 res;
-		UNS8 num = 0;
-		UNS8 size;
-		size = sizeof (num);
-		res = ReadSDO(1, 0x2015, 0, uint8, &num, &size);
-		if (res == 0)
-			printf("Number of entries: %x\n", num);
-
-		sleep(1);
-	}
+	while(1){}
 }
 
 void TestMaster_stopped(CO_Data* d)
